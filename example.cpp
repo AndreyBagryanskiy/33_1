@@ -1,6 +1,5 @@
 #include <iostream>
 #include <exception>
-#include <map>
 
 class DivisionByZeroException: public std::exception{
         const char* what() const noexcept override{
