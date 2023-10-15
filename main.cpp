@@ -2,41 +2,29 @@
 #include <exception>
 #include <map>
 
-class DivisionByZeroException: public std::exception{
-        const char* what() const noexcept override{
-            return "Division by zero";
-        }
-};
-
-
-int divide(int dividend, int divisor){
-    if(divisor == 0){
-        throw DivisionByZeroException();
-    }
-    return dividend / divisor;
-}
-
-int distribute(int apples, int count){
-    if(apples < 0 || count < 0){
-        throw std::invalid_argument(apples < 0 ? "aplles": "count");
-    }
-    return divide(apples, count);
-}
-
-int main(){
-    int apples;
-    int count;
-    bool input  = true;
-    while(input){
-        std::cin >> apples >> count ;
-
+void addToStock(std::map<std::string, int>& stock){
+    std::string article;
+    int quantity;
+    while(true){
+        std::cout << "Input article(string) and quantity(int) or 'end' to exit adding products: ";
+        std::cin >> article;
+        if(article == "end") break;
         try{
-            std::cout << "Apples: " << distribute(apples, count) << std::endl;
-            input = false;
-        }catch (const DivisionByZeroException& x){
-            input = false;
+            std::cin >> quantity;
+            if(std::cin.fail()){ 
+                std::cin.clear();
+                std::cin.sync();
+                throw std::invalid_argument("Invalid quantity, repeat input");
+            }
         }catch (const std::invalid_argument& x){
             std::cerr << "Invalid argument supplied: " << x.what() << std::endl;
         }
+        stock[article] = quantity;
     }
+}
+
+int main(){
+    std::map<std::string, int> stock;
+    std::map<std::string, int> cart;
+    addToStock(stock);
 }
