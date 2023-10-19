@@ -59,6 +59,40 @@ void addToCart(MAP& stock, MAP& cart){
         cart[article]+= stock.find(article)->second;
     }
     }
+    stock[article]-= quantity;
+
+}
+
+void removeToCart(MAP& stock, MAP& cart){
+    std::string article;
+    std::cout << "Input the article to remove from cart: ";
+    std::cin >> article;
+    if(cart.find(article) == cart.end()){
+        throw std::invalid_argument("The article was not in the cart!");
+    }
+    if(cart.find(article)->second <= 0){
+        cart.erase(cart.find(article));
+        throw std::invalid_argument("The article was not in the cart!");
+    }
+    int quantity;
+    std::cout << "Input the quantity to remove from cart: ";
+    std::cin >> quantity;
+    if(std::cin.fail() || quantity <= 0){ 
+        std::cin.clear();
+        std::cin.sync();
+        throw std::invalid_argument("Invalid quantity, repeat input");
+    }
+    if(quantity > (cart.find(article)->second)){
+        std::cout << "In cart have only" << cart.find(article)->second << " pieces this article." << std::endl;
+        std::cout << cart.find(article)->second << " products were removed to the cart." << std::endl;
+        stock.find(article)->second +=cart.find(article)->second;
+        cart.find(article)->second-= cart.find(article)->second;
+        if(cart.find(article)->second <= 0) cart.erase(cart.find(article));
+    }else{
+        stock.find(article)->second +=quantity;
+        cart.find(article)->second-= quantity;
+    }
+
 }
 
 
