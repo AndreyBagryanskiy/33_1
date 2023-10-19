@@ -1,10 +1,11 @@
 #include <iostream>
 #include <exception>
+#include <string>
 #include <map>
 
-#define MAP std::map<std::string
+#define MAP std::map<std::string, int>
 
-void addToStock(MAP, int>& stock){
+void addToStock(MAP& stock){
     std::string article;
     int quantity;
     while(true){
@@ -25,13 +26,13 @@ void addToStock(MAP, int>& stock){
     }
 }
 
-void mapOut(const MAP, int>& outMap){
+void mapOut(const MAP& outMap){
     for(auto it = outMap.begin(); it != outMap.end(); ++it){
         std::cout << it->first << " " << it->second << std::endl;
     }
 }
 
-void addToCart(MAP, int>& stock, MAP, int>& cart){
+void addToCart(MAP& stock, MAP& cart){
     std::string article;
     std::cout << "Input the article to add to the cart: ";
     std::cin >> article;
@@ -44,16 +45,20 @@ void addToCart(MAP, int>& stock, MAP, int>& cart){
     int quantity;
     std::cout << "Input the quantity to add to the cart: ";
     std::cin >> quantity;
-    if(std::cin.fail()){ 
+    if(std::cin.fail() || quantity <= 0){ 
         std::cin.clear();
         std::cin.sync();
         throw std::invalid_argument("Invalid quantity, repeat input");
     }
     if(quantity > (stock.find(article)->second)){
-        throw std::invalid_argument("The article was not found in the store!");   
+    std::cout << "Available to order only " << stock.find(article)->second << " piece." << std::endl;
+    std::cout << stock.find(article)->second << " products were added to the cart." << std::endl;
+    if(cart.find(article) == cart.end()){
+        cart[article] = stock.find(article)->second;
+    }else{
+        cart[article]+= stock.find(article)->second;
     }
-
-
+    }
 }
 
 
@@ -68,5 +73,6 @@ int main(){
     }catch (const std::invalid_argument& x){
         std::cerr << "Invalid argument supplied: " << x.what() << std::endl;
     }
+    mapOut(cart);
 
 }
