@@ -51,16 +51,19 @@ void addToCart(MAP& stock, MAP& cart){
         throw std::invalid_argument("Invalid quantity, repeat input");
     }
     if(quantity > (stock.find(article)->second)){
-    std::cout << "Available to order only " << stock.find(article)->second << " piece." << std::endl;
-    std::cout << stock.find(article)->second << " products were added to the cart." << std::endl;
-    if(cart.find(article) == cart.end()){
-        cart[article] = stock.find(article)->second;
+        std::cout << "Available to order only " << stock.find(article)->second << " piece." << std::endl;
+        std::cout << stock.find(article)->second << " products were added to the cart." << std::endl;
+        if(cart.find(article) == cart.end()){
+            cart[article] = stock.find(article)->second;
+        }else{
+        cart[article]+= stock.find(article)->second;     
+        }
+        stock[article] = 0;
     }else{
-        cart[article]+= stock.find(article)->second;
+        stock[article] -= quantity;
+        if(cart.find(article) == cart.end()) cart[article] = 0;
+        cart[article] += quantity;
     }
-    }
-    stock[article]-= quantity;
-
 }
 
 void removeToCart(MAP& stock, MAP& cart){
@@ -101,12 +104,31 @@ int main(){
     std::map<std::string, int> stock;
     std::map<std::string, int> cart;
     addToStock(stock);
-    mapOut(stock);
-    try{
-        addToCart(stock, cart);
-    }catch (const std::invalid_argument& x){
-        std::cerr << "Invalid argument supplied: " << x.what() << std::endl;
+    std::string command;
+    while(true){
+        std::cout << "Atricle in stock: " << std::endl; 
+        mapOut(stock);
+        std::cout << "Input command ('add', 'remove', or 'exit'):";
+        std::cin >> command;
+        if(command == "exit")break;
+        if(command == "add"){
+            try{
+                addToCart(stock, cart);
+            }catch (const std::invalid_argument& x){
+                std::cerr << "Invalid argument supplied: " << x.what() << std::endl;
+            }
+            std::cout << "Atricle in cart: " << std::endl; 
+            mapOut(cart);
+        }else if(command == "remove"){
+            try{
+                removeToCart(stock, cart);
+            }catch (const std::invalid_argument& x){
+                std::cerr << "Invalid argument supplied: " << x.what() << std::endl;
+            }
+            std::cout << "Atricle in cart: " << std::endl; 
+            mapOut(cart);            
+        }else{
+            std::cout << "Bad command! Repeat input!" << std::endl;
+        }
     }
-    mapOut(cart);
-
 }
